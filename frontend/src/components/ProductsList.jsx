@@ -9,44 +9,44 @@ const ProductsList = () => {
 
 	return (
 		<motion.div
-			className='bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto'
+			className='bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto mt-12' // Добавен клас mt-8
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.8 }}
 		>
-			<table className=' min-w-full divide-y divide-gray-700'>
+			<table className='min-w-full divide-y divide-gray-700'>
 				<thead className='bg-gray-700'>
 					<tr>
 						<th
 							scope='col'
-							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+							className='px-16 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
-							Product
+							Продукт
 						</th>
 						<th
 							scope='col'
-							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+							className='px-7 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
-							Price
+							Цена
 						</th>
 						<th
 							scope='col'
-							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+							className='px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
-							Category
+							Категория
 						</th>
 
 						<th
 							scope='col'
-							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+							className='px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
-							Featured
+							Специален
 						</th>
 						<th
 							scope='col'
-							className='px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
+							className='px-2 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider'
 						>
-							Actions
+							Действия
 						</th>
 					</tr>
 				</thead>
@@ -69,7 +69,7 @@ const ProductsList = () => {
 								</div>
 							</td>
 							<td className='px-6 py-4 whitespace-nowrap'>
-								<div className='text-sm text-gray-300'>${product.price.toFixed(2)}</div>
+								<div className='text-sm text-gray-300'>{product.price.toFixed(2)} лв.</div>
 							</td>
 							<td className='px-6 py-4 whitespace-nowrap'>
 								<div className='text-sm text-gray-300'>{product.category}</div>
@@ -78,8 +78,8 @@ const ProductsList = () => {
 								<button
 									onClick={() => toggleFeaturedProduct(product._id)}
 									className={`p-1 rounded-full ${
-										product.isFeatured ? "bg-yellow-400 text-gray-900" : "bg-gray-600 text-gray-300"
-									} hover:bg-yellow-500 transition-colors duration-200`}
+										product.isFeatured ? "bg-purple-300 text-gray-900" : "bg-gray-600 text-gray-300"
+									} hover:bg-purple-400 transition-colors duration-200`}
 								>
 									<Star className='h-5 w-5' />
 								</button>
@@ -99,4 +99,5 @@ const ProductsList = () => {
 		</motion.div>
 	);
 };
+
 export default ProductsList;

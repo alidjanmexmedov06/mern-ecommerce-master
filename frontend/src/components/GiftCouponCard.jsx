@@ -34,7 +34,7 @@ const GiftCouponCard = () => {
 			<div className='space-y-4'>
 				<div>
 					<label htmlFor='voucher' className='mb-2 block text-sm font-medium text-gray-300'>
-						Do you have a voucher or gift card?
+					    Имате ли ваучер за отстъпка?
 					</label>
 					<input
 						type='text'
@@ -56,15 +56,15 @@ const GiftCouponCard = () => {
 					whileTap={{ scale: 0.95 }}
 					onClick={handleApplyCoupon}
 				>
-					Apply Code
+					Приложете кода
 				</motion.button>
 			</div>
 			{isCouponApplied && coupon && (
 				<div className='mt-4'>
-					<h3 className='text-lg font-medium text-gray-300'>Applied Coupon</h3>
+					<h3 className='text-lg font-medium text-gray-300'>Вашият купон</h3>
 
 					<p className='mt-2 text-sm text-gray-400'>
-						{coupon.code} - {coupon.discountPercentage}% off
+						{coupon.code} - {coupon.discountPercentage}% намаление
 					</p>
 
 					<motion.button
@@ -76,19 +76,12 @@ const GiftCouponCard = () => {
 						whileTap={{ scale: 0.95 }}
 						onClick={handleRemoveCoupon}
 					>
-						Remove Coupon
+						Изтрийте кода
 					</motion.button>
 				</div>
 			)}
 
-			{coupon && (
-				<div className='mt-4'>
-					<h3 className='text-lg font-medium text-gray-300'>Your Available Coupon:</h3>
-					<p className='mt-2 text-sm text-gray-400'>
-						{coupon.code} - {coupon.discountPercentage}% off
-					</p>
-				</div>
-			)}
+		
 		</motion.div>
 	);
 };

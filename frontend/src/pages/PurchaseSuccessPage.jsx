@@ -54,23 +54,23 @@ const PurchaseSuccessPage = () => {
 						<CheckCircle className='text-emerald-400 w-16 h-16 mb-4' />
 					</div>
 					<h1 className='text-2xl sm:text-3xl font-bold text-center text-emerald-400 mb-2'>
-						Purchase Successful!
+						Успешна поръчка!
 					</h1>
 
 					<p className='text-gray-300 text-center mb-2'>
-						Thank you for your order. {"We're"} processing it now.
+					Благодарим Ви за направената поръчка!
 					</p>
 					<p className='text-emerald-400 text-center text-sm mb-6'>
-						Check your email for order details and updates.
+					Може да проверите имейла си за подробности и актуализации.
 					</p>
 					<div className='bg-gray-700 rounded-lg p-4 mb-6'>
 						<div className='flex items-center justify-between mb-2'>
-							<span className='text-sm text-gray-400'>Order number</span>
+							<span className='text-sm text-gray-400'>Номер на поръчката</span>
 							<span className='text-sm font-semibold text-emerald-400'>#12345</span>
 						</div>
 						<div className='flex items-center justify-between'>
-							<span className='text-sm text-gray-400'>Estimated delivery</span>
-							<span className='text-sm font-semibold text-emerald-400'>3-5 business days</span>
+							<span className='text-sm text-gray-400'>Получаване</span>
+							<span className='text-sm font-semibold text-emerald-400'>3-5 работни дни</span>
 						</div>
 					</div>
 
@@ -80,14 +80,14 @@ const PurchaseSuccessPage = () => {
              rounded-lg transition duration-300 flex items-center justify-center'
 						>
 							<HandHeart className='mr-2' size={18} />
-							Thanks for trusting us!
+							Благодарим Ви, че ни се доверихте!
 						</button>
 						<Link
 							to={"/"}
 							className='w-full bg-gray-700 hover:bg-gray-600 text-emerald-400 font-bold py-2 px-4 
             rounded-lg transition duration-300 flex items-center justify-center'
 						>
-							Continue Shopping
+							Към начална страница
 							<ArrowRight className='ml-2' size={18} />
 						</Link>
 					</div>

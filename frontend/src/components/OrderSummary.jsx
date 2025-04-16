@@ -41,31 +41,31 @@ const OrderSummary = () => {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 		>
-			<p className='text-xl font-semibold text-emerald-400'>Order summary</p>
+			<p className='text-xl font-semibold text-emerald-400'>Детайли за поръчката</p>
 
 			<div className='space-y-4'>
 				<div className='space-y-2'>
 					<dl className='flex items-center justify-between gap-4'>
-						<dt className='text-base font-normal text-gray-300'>Original price</dt>
-						<dd className='text-base font-medium text-white'>${formattedSubtotal}</dd>
+						<dt className='text-base font-normal text-gray-300'>Цена :</dt>
+						<dd className='text-base font-medium text-white'>{formattedSubtotal} лв.</dd>
 					</dl>
 
 					{savings > 0 && (
 						<dl className='flex items-center justify-between gap-4'>
-							<dt className='text-base font-normal text-gray-300'>Savings</dt>
-							<dd className='text-base font-medium text-emerald-400'>-${formattedSavings}</dd>
+							<dt className='text-base font-normal text-gray-300'>Намаление :</dt>
+							<dd className='text-base font-medium text-emerald-400'>-{formattedSavings} лв.</dd>
 						</dl>
 					)}
 
 					{coupon && isCouponApplied && (
 						<dl className='flex items-center justify-between gap-4'>
-							<dt className='text-base font-normal text-gray-300'>Coupon ({coupon.code})</dt>
+							<dt className='text-base font-normal text-gray-300'>Код за отстъпка ({coupon.code}) :</dt>
 							<dd className='text-base font-medium text-emerald-400'>-{coupon.discountPercentage}%</dd>
 						</dl>
 					)}
 					<dl className='flex items-center justify-between gap-4 border-t border-gray-600 pt-2'>
-						<dt className='text-base font-bold text-white'>Total</dt>
-						<dd className='text-base font-bold text-emerald-400'>${formattedTotal}</dd>
+						<dt className='text-base font-bold text-white'>Крайна сума :</dt>
+						<dd className='text-base font-bold text-emerald-400'>{formattedTotal} лв.</dd>
 					</dl>
 				</div>
 
@@ -75,16 +75,16 @@ const OrderSummary = () => {
 					whileTap={{ scale: 0.95 }}
 					onClick={handlePayment}
 				>
-					Proceed to Checkout
+					Към поръчката
 				</motion.button>
 
 				<div className='flex items-center justify-center gap-2'>
-					<span className='text-sm font-normal text-gray-400'>or</span>
+					<span className='text-sm font-normal text-gray-400'>или</span>
 					<Link
 						to='/'
 						className='inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline'
 					>
-						Continue Shopping
+						Пазарувайте още
 						<MoveRight size={16} />
 					</Link>
 				</div>
