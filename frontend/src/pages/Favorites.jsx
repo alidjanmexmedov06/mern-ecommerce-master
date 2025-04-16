@@ -26,7 +26,7 @@ const Favorites = () => {
 
       {favorites.length === 0 ? (
         <div className="text-2xl text-gray-400 text-center">
-          <p>Нямате добавени любими продукти.</p>
+          <p>Нямате харесани продукти.</p>
           <Link
             to="/"
             className="text-2xl text-emerald-400 hover:text-emerald-500 transition duration-300"
