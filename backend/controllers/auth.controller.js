@@ -423,3 +423,112 @@ export const updateOrderDeliveredStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+const sendResetPasswordEmail = async (to, resetLink) => {
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject: "Възстановяване на парола",
+    html: `
+      <h2>Възстановяване на парола</h2>
+      <p>Моля, кликнете върху линка по-долу, за да възстановите паролата си:</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>Линкът е валиден за 1 час.</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Имейл за възстановяване изпратен успешно до:", to);
+  } catch (error) {
+    console.error("Грешка при изпращане на имейл:", error);
+    throw new Error("Неуспешно изпращане на имейл за възстановяване");
+  }
+};
+const sendPasswordResetConfirmationEmail = async (to) => {
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject: "Паролата ви беше успешно обновена",
+    html: `
+      <h2>Паролата ви беше успешно обновена</h2>
+      <p>Вашата парола беше успешно променена.</p>
+      <p>Ако не сте направили тази промяна, моля, свържете се с нас незабавно.</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Потвърдителен имейл за ресет на парола изпратен успешно до:", to);
+  } catch (error) {
+    console.error("Грешка при изпращане на потвърдителен имейл:", error);
+    throw new Error("Неуспешно изпращане на потвърдителен имейл");
+  }
+};
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Проверка дали потребителят съществува
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Потребител с този имейл не съществува" });
+    }
+
+    // Генериране на токен за ресет на паролата
+    const resetToken = jwt.sign(
+      { userId: user._id },
+      process.env.REFRESH_TOKEN_SECRET, // Използваме същия секрет като за refresh токена
+      { expiresIn: "1h" }
+    );
+
+    // Създаване на линк за ресет
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    // Изпращане на имейл
+    await sendResetPasswordEmail(email, resetLink);
+
+    res.status(200).json({ message: "Имейл за възстановяване на парола е изпратен успешно" });
+  } catch (error) {
+    console.log("Error in forgotPassword controller:", error.message);
+    res.status(500).json({ message: error.message || "Грешка при изпращане на имейл" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(400).json({ message: "Невалиден или изтекъл токен" });
+    }
+
+    user.password = password;
+    await user.save();
+
+    await sendPasswordResetConfirmationEmail(user.email);
+
+    res.status(200).json({ message: "Паролата е успешно обновена" });
+  } catch (error) {
+    console.log("Error in resetPassword controller:", error.message);
+    res.status(400).json({ message: "Невалиден или изтекъл токен" });
+  }
+};

@@ -17,6 +17,8 @@ import CartPage from "./pages/CartPage";
 import { useCartStore } from "./stores/useCartStore";
 import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+import StorePage from "./pages/StorePage"; // Импортираме StorePage
+import ProductDetails from "./pages/ProductDetails";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -59,12 +61,15 @@ function App() {
             element={user?.role === "admin" ? <AdminPage /> : <Navigate to='/login' />}
           />
           <Route path='/category/:category' element={<CategoryPage />} />
+          <Route path='/store' element={<StorePage />} /> {/* Свързваме маршрута с StorePage */}
+          <Route path='/products/:id' element={<ProductDetails />} />
           <Route path='/cart' element={user ? <CartPage /> : <Navigate to='/login' />} />
           <Route path='/purchase-success' element={user ? <PurchaseSuccessPage /> : <Navigate to='/login' />} />
           <Route path='/purchase-cancel' element={user ? <PurchaseCancelPage /> : <Navigate to='/login' />} />
           <Route path='/search/:keyword' element={<HomePage />} />
           <Route path='/profile' element={user ? <ProfilePage /> : <Navigate to='/login' />} />
           <Route path='/favorites' element={user ? <Favorites /> : <Navigate to='/login' />} />
+          
         </Routes>
       </div>
       <Toaster 

@@ -5,11 +5,11 @@ import FeaturedProducts from "../components/FeaturedProducts";
 
 const categories = [
 	{ href: "/къси панталони", name: "Къси панталони", imageUrl: "/къси панталони.jpg" },
-	{ href: "/tshirts", name: "Тениски", imageUrl: "/тениски.jpg" },
-	{ href: "/shoes", name: "Обувки", imageUrl: "/обувки.jpg" },
-	{ href: "/glasses", name: "Раници", imageUrl: "/bag.jpg" },
-	{ href: "/jackets", name: "Фитнес аксесоари", imageUrl: "/fitness.jpg" },
-	{ href: "/suits", name: "Спортни часовници", imageUrl: "/clocks.jpg" },
+	{ href: "/тениски", name: "Тениски", imageUrl: "/тениски.jpg" },
+	{ href: "/обувки", name: "Обувки", imageUrl: "/обувки.jpg" },
+	{ href: "/раници", name: "Раници", imageUrl: "/bag.jpg" },
+	{ href: "/фитнес аксесоари", name: "Фитнес аксесоари", imageUrl: "/fitness.jpg" },
+	{ href: "/спортни часовници", name: "Спортни часовници", imageUrl: "/clocks.jpg" },
 ];
 
 const HomePage = () => {
