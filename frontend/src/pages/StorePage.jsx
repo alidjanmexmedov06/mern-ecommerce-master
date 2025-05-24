@@ -106,7 +106,7 @@ const StorePage = () => {
               onChange={(e) => setSortOption(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
             >
-              <option value="" disabled hidden>Избери</option>
+              <option value="" disabled hidden>Изберете</option>
               <option value="newest">Най-нови</option>
               <option value="lowToHigh">Цена: Ниска към висока</option>
               <option value="highToLow">Цена: Висока към ниска</option>
