@@ -5,6 +5,11 @@ import jwt from "jsonwebtoken";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import cloudinary from "../lib/cloudinary.js";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import bcrypt from "bcryptjs";
+
 
 // Настройка на multer за качване на файлове
 const storage = multer.diskStorage({
@@ -83,7 +88,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-
+    console.log(await bcrypt.hash(password, 10));
     if (user && (await user.comparePassword(password))) {
       const { accessToken, refreshToken } = generateTokens(user._id);
       await storeRefreshToken(user._id, refreshToken);
@@ -93,6 +98,7 @@ export const login = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        profilePicture: user.profilePicture,
         role: user.role,
       });
     } else {
@@ -184,8 +190,13 @@ export const updateProfile = async (req, res) => {
       user.password = password;
     }
     if (req.file) {
+      let cloudinaryResponse = null;
+      
+          
+        cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, { folder: "products" });
+          
       console.log("Запазване на нова профилна снимка:", req.file.filename);
-      user.profilePicture = `/uploads/${req.file.filename}`;
+      user.profilePicture = cloudinaryResponse?.secure_url ? cloudinaryResponse.secure_url : "";
     }
 
     await user.save();
@@ -270,14 +281,7 @@ export const makeUserAdmin = async (req, res) => {
       return res.status(400).json({ message: "Потребителят вече е администратор" });
     }
 
-    const currentAdmin = await User.findOne({ role: "admin" });
-    if (currentAdmin && currentAdmin._id.toString() !== userId) {
-      currentAdmin.role = "user";
-      await currentAdmin.save();
-    } else if (!currentAdmin) {
-      console.log("Не е намерен текущ администратор!");
-    }
-
+    // Задаваме ролята на потребителя на "admin", без да променяме другите администратори
     user.role = "admin";
     await user.save();
 
@@ -423,112 +427,77 @@ export const updateOrderDeliveredStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-const sendResetPasswordEmail = async (to, resetLink) => {
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Възстановяване на парола",
-    html: `
-      <h2>Възстановяване на парола</h2>
-      <p>Моля, кликнете върху линка по-долу, за да възстановите паролата си:</p>
-      <a href="${resetLink}">${resetLink}</a>
-      <p>Линкът е валиден за 1 час.</p>
-    `,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log("Имейл за възстановяване изпратен успешно до:", to);
-  } catch (error) {
-    console.error("Грешка при изпращане на имейл:", error);
-    throw new Error("Неуспешно изпращане на имейл за възстановяване");
-  }
-};
-const sendPasswordResetConfirmationEmail = async (to) => {
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Паролата ви беше успешно обновена",
-    html: `
-      <h2>Паролата ви беше успешно обновена</h2>
-      <p>Вашата парола беше успешно променена.</p>
-      <p>Ако не сте направили тази промяна, моля, свържете се с нас незабавно.</p>
-    `,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log("Потвърдителен имейл за ресет на парола изпратен успешно до:", to);
-  } catch (error) {
-    console.error("Грешка при изпращане на потвърдителен имейл:", error);
-    throw new Error("Неуспешно изпращане на потвърдителен имейл");
-  }
-};
 export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-
   try {
-    // Проверка дали потребителят съществува
+    const { email } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) {
-      return res.status(404).json({ message: "Потребител с този имейл не съществува" });
+      return res.status(404).json({ message: "Потребителят не е намерен" });
     }
 
-    // Генериране на токен за ресет на паролата
-    const resetToken = jwt.sign(
-      { userId: user._id },
-      process.env.REFRESH_TOKEN_SECRET, // Използваме същия секрет като за refresh токена
-      { expiresIn: "1h" }
-    );
+    // Генериране на токен и хеш
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-    // Създаване на линк за ресет
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    user.resetPasswordToken = resetTokenHash;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 минути
+    await user.save();
 
-    // Изпращане на имейл
-    await sendResetPasswordEmail(email, resetLink);
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
-    res.status(200).json({ message: "Имейл за възстановяване на парола е изпратен успешно" });
+    // Настройка на пощенския клиент
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false // Игнорира самоподписани сертификати
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Нулиране на парола",
+      html: `<p>Кликнете на линка, за да нулирате паролата си:</p><a href="${resetUrl}">${resetUrl}</a>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Имейлът е изпратен успешно:", mailOptions);
+
+    res.json({ message: "Имейлът е изпратен успешно" });
+
   } catch (error) {
-    console.log("Error in forgotPassword controller:", error.message);
-    res.status(500).json({ message: error.message || "Грешка при изпращане на имейл" });
+    console.log("Error in forgotPassword controller", error.message);
+    res.status(500).json({ message: "Възникна грешка при изпращане на имейла" });
   }
 };
-
 export const resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { password } = req.body;
-
   try {
-    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded.userId);
+    const { token, password } = req.body;
+    const resetTokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
     if (!user) {
       return res.status(400).json({ message: "Невалиден или изтекъл токен" });
     }
-
+    console.log(password);
     user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
 
-    await sendPasswordResetConfirmationEmail(user.email);
-
-    res.status(200).json({ message: "Паролата е успешно обновена" });
+    res.json({ message: "Паролата е успешно нулирана" });
   } catch (error) {
-    console.log("Error in resetPassword controller:", error.message);
-    res.status(400).json({ message: "Невалиден или изтекъл токен" });
+    console.log("Error in resetPassword controller", error.message);
+    res.status(500).json({ message: "Възникна грешка при нулиране на паролата" });
   }
 };

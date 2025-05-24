@@ -22,7 +22,7 @@ const PurchaseCancelPage = () => {
 					<div className='bg-gray-700 rounded-lg p-4 mb-6'>
 						<p className='text-sm text-gray-400 text-center'>
 						Ако срещнете някакви проблеми по време на процеса на плащане, 
-						моля, свържете се с нашия екип.
+						свържете се с нашия екип.
 						</p>
 					</div>
 					<div className='space-y-4'>

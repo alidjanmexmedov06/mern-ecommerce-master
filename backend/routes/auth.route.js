@@ -12,13 +12,13 @@ const router = Router();
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
 router.post("/refresh-token", refreshToken);
 router.get("/profile", protectRoute, getProfile);
 router.patch("/profile", protectRoute, uploadMiddleware, updateProfile);
 router.get("/users", protectRoute, getAllUsers);
 router.delete("/users/:id", protectRoute, deleteUser);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 router.patch("/users/:id/make-admin", protectRoute, makeUserAdmin);
 
 // Маршрути за поръчки

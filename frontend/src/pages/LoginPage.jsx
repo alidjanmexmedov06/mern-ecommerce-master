@@ -4,17 +4,16 @@ import { Link } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
 import { useUserStore } from "../stores/useUserStore";
 import { Eye, EyeOff } from "lucide-react";
-import ForgotPasswordModal from "../components/ForgotPasswordModal"; // Импорт на новия компонент
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [email, setEmail] = useState(""); // Състояние за имейл
+  const [password, setPassword] = useState(""); // Състояние за парола
+  const [rememberMe, setRememberMe] = useState(false); // Състояние за "Запомни ме"
+  const [showPassword, setShowPassword] = useState(false); // Състояние за показване/скриване на паролата
 
-  const { login, loading } = useUserStore();
+  const { login, loading } = useUserStore(); // Извличане на login функцията и състоянието за зареждане от useUserStore
 
+  // Зареждане на запазени имейл и парола от localStorage при първоначално зареждане
   useEffect(() => {
     const savedEmail = localStorage.getItem("email");
     const savedPassword = localStorage.getItem("password");
@@ -27,11 +26,13 @@ const LoginPage = () => {
     }
   }, []);
 
+  // Обработка на изпращането на формата
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(email, password);
-    login(email, password);
+    login(email, password); // Извикване на login функцията от useUserStore
 
+    // Запазване или премахване на данни в localStorage в зависимост от "Запомни ме"
     if (rememberMe) {
       localStorage.setItem("email", email);
       localStorage.setItem("password", password);
@@ -43,6 +44,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Заглавие с анимация */}
       <motion.div
         className="sm:mx-auto sm:w-full sm:max-w-md"
         initial={{ opacity: 0, y: -20 }}
@@ -52,6 +54,7 @@ const LoginPage = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-emerald-500">Вход</h2>
       </motion.div>
 
+      {/* Форма за вход с анимация */}
       <motion.div
         className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
         initial={{ opacity: 0, y: 20 }}
@@ -60,6 +63,7 @@ const LoginPage = () => {
       >
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Поле за имейл */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Електронна поща
@@ -82,6 +86,7 @@ const LoginPage = () => {
               </div>
             </div>
 
+            {/* Поле за парола */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Парола
@@ -115,6 +120,7 @@ const LoginPage = () => {
               </div>
             </div>
 
+            {/* Опции за "Запомни ме" и "Забравена парола" */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -129,15 +135,13 @@ const LoginPage = () => {
                 </label>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsForgotPasswordOpen(true)}
-                className="text-sm text-gray-300 hover:text-emerald-300"
-              >
+              {/* Линк към страницата за забравена парола */}
+              <Link to="/forgot-password" className="text-sm text-gray-300 hover:text-emerald-300">
                 Забравена парола?
-              </button>
+              </Link>
             </div>
 
+            {/* Бутон за вход */}
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent 
@@ -149,7 +153,7 @@ const LoginPage = () => {
               {loading ? (
                 <>
                   <Loader className="mr-2 h-5 w-5 animate-spin" aria-hidden="true" />
-                  Loading...
+                  Зареждане...
                 </>
               ) : (
                 <>
@@ -160,6 +164,7 @@ const LoginPage = () => {
             </button>
           </form>
 
+          {/* Линк за регистрация */}
           <p className="mt-8 text-center text-sm text-gray-400">
             Нямаш акаунт?{" "}
             <Link to="/signup" className="font-medium text-emerald-400 hover:text-emerald-300">
@@ -168,12 +173,6 @@ const LoginPage = () => {
           </p>
         </div>
       </motion.div>
-
-      {/* Използване на ForgotPasswordModal */}
-      <ForgotPasswordModal
-        isOpen={isForgotPasswordOpen}
-        onClose={() => setIsForgotPasswordOpen(false)}
-      />
     </div>
   );
 };

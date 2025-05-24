@@ -52,7 +52,7 @@ const UsersList = () => {
   };
 
   const handleMakeAdmin = async (userId) => {
-    if (!window.confirm("Сигурен ли си, че искаш да направиш този потребител администратор? Вие ще загубите администраторските си права.")) return;
+    if (!window.confirm("Сигурен ли си, че искаш да направиш този потребител администратор?")) return;
     try {
       const updatedUsers = await makeUserAdmin(userId);
       setUsers(updatedUsers);

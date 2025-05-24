@@ -24,12 +24,39 @@ export const useUserStore = create((set, get) => ({
       toast.error(error.response.data.message || "An error occurred");
     }
   },
+  forgotPassword: async (email) => {
+  set({ loading: true });
+  try {
+    const res = await axios.post("/auth/forgot-password", { email });
+    set({ loading: false }); // Премахнете set({ user: res.data })
+    toast.success("Успешно изпращане на имейл!");
+    return res; // Връщайте резултата, за да може ForgotPassword да го обработи
+  } catch (error) {
+    set({ loading: false });
+    toast.error(error.response.data.message || "An error occurred");
+    throw error; // Хвърлете грешката, за да може ForgotPassword да я хване
+  }
+},
+resetPassword: async (token, password) => {
+    set({ loading: true });
+    try {
+      const res = await axios.post("auth/reset-password", { token, password });
+      set({ loading: false });
+      toast.success("Паролата е успешно нулирана!");
+      return res;
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response?.data?.message || "Възникна грешка при нулиране на паролата");
+      throw error;
+    }
+  },
 
   login: async (email, password) => {
     set({ loading: true });
 
     try {
       const res = await axios.post("/auth/login", { email, password });
+      console.log("Login response:", res.data);
       set({ user: res.data, loading: false });
       toast.success("Успешен вход!");
     } catch (error) {
@@ -128,30 +155,22 @@ export const useUserStore = create((set, get) => ({
   },
 
   makeUserAdmin: async (userId) => {
-    try {
-      const res = await axios.patch(`/auth/users/${userId}/make-admin`, {
-        role: "admin",
-      });
-  
-      // Актуализираме списъка с потребители
-      const updatedUsers = res.data;
-  
-      // Проверяваме дали текущият потребител (Иван) е засегнат от промяната
-      const currentUser = get().user;
-      if (currentUser && currentUser._id !== userId && currentUser.role === "admin") {
-        // Ако текущият потребител е бил администратор, но вече не е (защото Гошо е станал admin),
-        // актуализираме състоянието му
-        const updatedCurrentUser = updatedUsers.find((u) => u._id === currentUser._id);
-        set({ user: updatedCurrentUser });
-      }
-  
-      toast.success("Потребителят е направен администратор успешно!");
-      return updatedUsers; // Връщаме списъка с всички потребители
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Грешка при промяна на ролята");
-      throw error;
-    }
-  },
+  try {
+    const res = await axios.patch(`/auth/users/${userId}/make-admin`, {
+      role: "admin",
+    });
+
+    // Актуализираме списъка с потребители
+    const updatedUsers = res.data;
+
+    // Няма нужда да проверяваме за промяна на текущия потребител, тъй като ролята му не се променя
+    toast.success("Потребителят е направен администратор успешно!");
+    return updatedUsers; // Връщаме списъка с всички потребители
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Грешка при промяна на ролята");
+    throw error;
+  }
+},
   
 }));
 

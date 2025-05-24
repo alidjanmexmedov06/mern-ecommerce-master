@@ -81,7 +81,7 @@ const OrderSummary = () => {
 				<div className='flex items-center justify-center gap-2'>
 					<span className='text-sm font-normal text-gray-400'>или</span>
 					<Link
-						to='/'
+						to='/store'
 						className='inline-flex items-center gap-2 text-sm font-medium text-emerald-400 underline hover:text-emerald-300 hover:no-underline'
 					>
 						Пазарувайте още

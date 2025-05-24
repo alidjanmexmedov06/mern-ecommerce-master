@@ -70,14 +70,14 @@ const FeaturedProductCard = ({ product }) => {
             >
               <Heart
                 className={`h-6 w-6 transition-colors duration-300 ${
-                  isFavorite ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"
+                  isFavorite && user ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"
                 }`}
               />
             </button>
           </div>
           <button
             onClick={handleAddToCart}
-            className="w-full bg-orange-400 hover:bg-orange-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
+            className="w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
           >
             Добави в количката
           </button>
@@ -116,7 +116,7 @@ const FeaturedProducts = ({ featuredProducts }) => {
   const isEndDisabled = currentIndex >= featuredProducts.length - itemsPerPage;
 
   return (
-    <div className="py-36">
+    <div className="py-32">
       <div className="container mx-auto px-4">
         <h2 className="text-center text-5xl sm:text-4xl font-bold text-emerald-400 mb-4">
           Специални предложения

@@ -21,7 +21,7 @@ const HomePage = () => {
 
 	return (
 		
-			<div className='z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
+			<div className="z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-16 pb-16">
 				<h1 className='text-center text-5xl sm:text-5xl font-bold text-emerald-400 mb-4'>
 					Добре дошли в нашия сайт
 				</h1>

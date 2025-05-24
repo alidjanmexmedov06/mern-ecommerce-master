@@ -2,22 +2,20 @@ import { useEffect, useState } from "react";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
+import { CheckCircle, XCircle } from "lucide-react";
 
 const OrdersList = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Взимане на поръчките от API
   const fetchOrders = async () => {
     try {
       const response = await axios.get("/auth/orders");
       setOrders(response.data);
-      setLoading(false);
     } catch (error) {
       toast.error(
         error.response?.data?.message || `Грешка при зареждане на поръчките: ${error.message}`
       );
-      setLoading(false);
     }
   };
 
@@ -59,73 +57,79 @@ const OrdersList = () => {
     fetchOrders();
   }, []);
 
-  if (loading) {
-    return <p className="text-white text-center p-6">Зареждане...</p>;
-  }
-
   return (
     <motion.div
       className="p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
     >
       {orders.length === 0 ? (
         <p className="text-gray-400 text-3xl text-center">Няма направени поръчки.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-700 rounded-lg bg-gray-800">
+        <div className="overflow-x-auto overflow-hidden rounded-2xl">
+          <table className="min-w-full border border-gray-700 rounded-2xl bg-gray-800">
             <thead className="bg-gray-900">
-              <tr className="text-left text-pink-300 text-sm">
-                <th className="p-4 border-b border-gray-700">Изображение</th>
+              <tr className="text-center text-orange-200 text-balance">
+                <th className="p-4 border-b border-gray-700 rounded-tl-2xl">Изображение</th>
                 <th className="p-4 border-b border-gray-700">ID на поръчката</th>
                 <th className="p-4 border-b border-gray-700">Клиент</th>
                 <th className="p-4 border-b border-gray-700">Дата</th>
                 <th className="p-4 border-b border-gray-700">Сума</th>
                 <th className="p-4 border-b border-gray-700">Плащане</th>
-                <th className="p-4 border-b border-gray-700">Доставка</th>
+                <th className="p-4 border-b border-gray-700 rounded-tr-2xl">Доставка</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
                 <tr key={order._id} className="border-b border-gray-700">
-                  <td className="p-4">
-                    <div className="flex flex-col space-y-2">
-                      {order.products.map((item, index) =>
-                        item.product?.image ? (
-                          <img
-                            key={index}
-                            src={item.product.image || "https://via.placeholder.com/50"}
-                            alt={item.product.name}
-                            className="w-12 h-12 object-cover rounded-md"
-                          />
-                        ) : null
-                      )}
-                    </div>
+                  <td className="p-4 text-center">
+                    {(() => {
+                      const firstWithImage = order.products.find((p) => p.product?.image);
+                      return firstWithImage ? (
+                        <img
+                          src={firstWithImage.product.image}
+                          alt={firstWithImage.product.name}
+                          className="w-12 h-12 object-cover rounded-xl border border-gray-600 mx-auto"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-600 rounded-xl mx-auto" />
+                      );
+                    })()}
                   </td>
-                  <td className="p-4 text-white">{order._id}</td>
-                  <td className="p-4 text-white">{order.user?.name || "X"}</td>
-                  <td className="p-4 text-white">
+                  <td className="p-4 text-white text-center">{order._id}</td>
+                  <td className="p-4 text-white text-center">{order.user?.name || "X"}</td>
+                  <td className="p-4 text-white text-center">
                     {new Date(order.createdAt).toISOString().split("T")[0]}
                   </td>
-                  <td className="p-4 text-white">{order.totalAmount.toFixed(2)} лв.</td>
-                  <td className="p-4">
+                  <td className="p-4 text-white text-center">{order.totalAmount.toFixed(2)} лв.</td>
+                  <td className="p-4 text-center">
                     <button
                       onClick={() => handleUpdatePaidStatus(order._id, order.isPaid)}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        order.isPaid ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                      className={`flex items-center gap-2 px-3 py-1 rounded-xl text-sm mx-auto ${
+                        order.isPaid ? "bg-green-600 text-white" : "bg-orange-600 text-white"
                       }`}
                     >
+                      {order.isPaid ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <XCircle className="w-4 h-4" />
+                      )}
                       {order.isPaid ? "Платено" : "В очакване"}
                     </button>
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 text-center">
                     <button
                       onClick={() => handleUpdateDeliveredStatus(order._id, order.isDelivered)}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        order.isDelivered ? "bg-green-600 text-white" : "bg-red-600 text-white"
+                      className={`flex items-center gap-2 px-3 py-1 rounded-xl text-sm mx-auto ${
+                        order.isDelivered ? "bg-green-600 text-white" : "bg-orange-600 text-white"
                       }`}
                     >
+                      {order.isDelivered ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <XCircle className="w-4 h-4" />
+                      )}
                       {order.isDelivered ? "Доставено" : "В процес на доставка"}
                     </button>
                   </td>

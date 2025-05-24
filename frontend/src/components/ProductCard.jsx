@@ -70,13 +70,13 @@ const ProductCard = ({ product }) => {
           >
             <Heart
               className={`h-6 w-6 transition-colors duration-300 ${
-                isFavorite ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"
+                isFavorite && user ? "fill-red-500 text-red-500" : "text-gray-500 hover:text-red-500"
               }`}
             />
           </button>
         </div>
         <button
-          className="flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+          className="flex items-center justify-center rounded-lg bg-orange-400 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-200"
           onClick={handleAddToCart}
         >
           <ShoppingCart size={22} className="mr-2" />
