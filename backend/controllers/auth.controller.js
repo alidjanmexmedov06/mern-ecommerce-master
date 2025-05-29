@@ -312,6 +312,19 @@ export const getOrders = async (req, res) => {
   }
 };
 
+export const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const orders = await Order.find({ user: userId }).populate("products.product", "name image");
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error in getMyOrders:", error.message);
+    res.status(500).json({ message: "Грешка при зареждане на поръчките" });
+  }
+};
+
 export const getOrderById = async (req, res) => {
   try {
     if (req.user.role !== "admin") {

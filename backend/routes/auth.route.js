@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   signup, login, logout, refreshToken, getProfile, updateProfile, uploadMiddleware, getAllUsers, 
   deleteUser, makeUserAdmin, forgotPassword, resetPassword,
-  createOrder, getOrders, getOrderById, deleteOrder, updateOrderPaidStatus, updateOrderDeliveredStatus,
+  createOrder, getOrders, getMyOrders, getOrderById, deleteOrder, updateOrderPaidStatus, updateOrderDeliveredStatus,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -24,6 +24,7 @@ router.patch("/users/:id/make-admin", protectRoute, makeUserAdmin);
 // Маршрути за поръчки
 router.post("/orders", protectRoute, createOrder);
 router.get("/orders", protectRoute, getOrders);
+router.get("/my-orders", protectRoute, getMyOrders);
 router.get("/orders/:id", protectRoute, getOrderById);
 router.delete("/orders/:id", protectRoute, deleteOrder);
 router.patch("/orders/:id/paid", protectRoute, updateOrderPaidStatus);

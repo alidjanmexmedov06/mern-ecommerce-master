@@ -12,22 +12,20 @@ const MyOrders = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserOrders = async () => {
-      try {
-        const response = await axios.get("/auth/orders");
-        const userOrders = response.data.filter(
-          (order) => order.user?._id === user?._id
-        );
-        setOrders(userOrders);
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message ||
-            `Грешка при зареждане на поръчките: ${error.message}`
-        );
-      }
-    };
-    fetchUserOrders();
-  }, [user]);
+  const fetchUserOrders = async () => {
+    try {
+      const response = await axios.get("/auth/my-orders"); // <- правилният път!
+      setOrders(response.data);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          `Грешка при зареждане на поръчките: ${error.message}`
+      );
+    }
+  };
+
+  fetchUserOrders();
+}, [user]);
 
   return (
     <motion.div
@@ -102,7 +100,7 @@ const MyOrders = () => {
                           ? "Доставена"
                           : order.isPaid
                           ? "Изпратена"
-                          : "Обработва се"}
+                          : "Обработка"}
                       </span>
                     </td>
                     <td className="p-6 text-center">
